@@ -1,0 +1,74 @@
+//início
+program     ::= "esteira" string "{" { stmt | var_decl } "}" ;
+
+var_decl    ::= "var" id_list [ ":" type ] [ "=" expr ] ";" ;
+id_list     ::= ident { "," ident } ;
+type        ::= "int" | "float" | "bool" | "string" ;
+
+//o que pode ser uma instrução de linguagem
+stmt        ::= assign ";"
+              | if_stmt
+              | while_stmt
+              | action_stmt
+              | in_out_stmt
+              | "esperar" time_val ";"
+              | bloco ;
+
+//atribuições
+assign      ::= lvalue "=" expr ;
+lvalue      ::= ident | "mem" "[" expr "]" ;
+
+//instruções
+bloco       ::= "{" { stmt | var_decl } "}" ;
+
+if_stmt     ::= "se" "(" expr ")" bloco [ "senao" bloco ] ;
+while_stmt  ::= "enquanto" "(" expr ")" bloco ;
+
+action_stmt ::= "ligar" ";"
+              | "desligar" ";"
+              | "iniciar" ";"
+              | "parar" ";"
+              | "definir" alvo "=" dim_val ";" ;
+
+alvo        ::= ident ; (* ex.: velocidade, inclinacao, alvo_velocidade *)
+
+in_out_stmt     ::= "mostrar" "(" expr { "," expr } ")" ";"
+              | "bip" ";" ;
+
+//unidades
+dim_val     ::= expr [ unit ] ;
+time_val    ::= expr ( "ms" | "s" | "min" ) ;
+unit        ::= "km/h" | "m/s" | "%" | "graus" | "bpm" | "km" | "m" | "min" | "s" ;
+
+//expressões
+expr        ::= or_expr ;
+or_expr     ::= and_expr { ( "ou" | "||" ) and_expr } ;
+and_expr    ::= eq_expr  { ( "e"  | "&&" ) eq_expr  } ;
+eq_expr     ::= rel_expr { ( "==" | "!=" ) rel_expr } ;
+rel_expr    ::= add_expr { ( "<" | ">" | "<=" | ">=" ) add_expr } ;
+add_expr    ::= mul_expr { ( "+" | "-" ) mul_expr } ;
+mul_expr    ::= un_expr  { ( "*" | "/" | "%" ) un_expr  } ;
+un_expr     ::= ( "!" | "-" | "+" ) un_expr | primary ;
+
+primary     ::= literal | ident
+              | "sensor" "." ident
+              | "reg" "(" reg ")"
+              | "mem" "[" expr "]"
+              | "(" expr ")" ;
+
+//registradores
+reg         ::= "R0" | "R1" | "R2" | "R3" ;
+
+//parte literal do código
+literal     ::= int_lit | float_lit | string | bool_lit ;
+bool_lit    ::= "true" | "false" ;
+
+//identificadores
+ident       ::= letter { letter | digit | "_" } ;
+int_lit     ::= digit { digit } ;
+float_lit   ::= digit { digit } "." digit { digit } ;
+string      ::= '"' { char - '"' | '\"' | '\\' char } '"' ;
+letter      ::= "A" | ... | "Z" | "a" | ... | "z" | "_" ;
+digit       ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+(* comentários aceitos: "# ...", "// ...", "/* ... */" *)
