@@ -1,92 +1,74 @@
-%option noyywrap nodefault yylineno
-%x CCOMMENT
-%{
-  #include <stdio.h>
-  #include <string.h>
-  #include <stdlib.h>
-  #include "parser.tab.h"
-  static char* dup_text(void) { return strdup(yytext); }
-%}
-WS      [ \t\r]+
-ID      [A-Za-z_][A-Za-z0-9_]*
-INT     [0-9]+
-FLOAT   {INT}"."{INT}
-STRING  \"([^\\\n\"]|\\.)*\"
-%%
-{WS}                          ;
-"//".*                        ;
-"#".*                         ;
-"/*"                          { BEGIN(CCOMMENT); }
-<CCOMMENT>"*/"                { BEGIN(INITIAL); }
-<CCOMMENT>\n                  ;
-<CCOMMENT>.                   ;
-"esteira"                     { return ESTEIRA; }
-"var"                         { return VAR; }
-"se"                          { return SE; }
-"senao"                       { return SENAO; }
-"enquanto"                    { return ENQUANTO; }
-"ligar"                       { return LIGAR; }
-"desligar"                    { return DESLIGAR; }
-"iniciar"                     { return INICIAR; }
-"parar"                       { return PARAR; }
-"definir"                     { return DEFINIR; }
-"mostrar"                     { return MOSTRAR; }
-"bip"                         { return BIP; }
-"esperar"                     { return ESPERAR; }
-"sensor"                      { return SENSOR; }
-"reg"                         { return REG; }
-"mem"                         { return MEM; }
-"true"                        { return TRUE; }
-"false"                       { return FALSE; }
-"int"                         { return TYPE_INT; }
-"float"                       { return TYPE_FLOAT; }
-"bool"                        { return TYPE_BOOL; }
-"string"                      { return TYPE_STRING; }
-"km/h"                        { return UNIT_KM_H; }
-"m/s"                         { return UNIT_M_S; }
-"%"                           { return UNIT_PERCENT; }
-"graus"                       { return UNIT_GRAUS; }
-"bpm"                         { return UNIT_BPM; }
-"km"                          { return UNIT_KM; }
-"min"                         { return UNIT_MIN; }
-"ms"                          { return UNIT_MS; }
-"m"                           { return UNIT_M; }
-"s"                           { return UNIT_S; }
-"R0"                          { return R0; }
-"R1"                          { return R1; }
-"R2"                          { return R2; }
-"R3"                          { return R3; }
-"||"                          { return LOR; }
-"ou"                          { return LOR; }
-"&&"                          { return LAND; }
-"e"                           { return LAND; }
-"=="                          { return EQEQ; }
-"!="                          { return NEQ; }
-"<="                          { return LEQ; }
-">="                          { return GEQ; }
-"="                           { return '='; }
-"<"                           { return '<'; }
-">"                           { return '>'; }
-"+"                           { return '+'; }
-"-"                           { return '-'; }
-"*"                           { return '*'; }
-"/"                           { return '/'; }
-"%"                           { return '%'; }
-"!"                           { return '!'; }
-"."                           { return '.'; }
-","                           { return ','; }
-";"                           { return ';'; }
-":"                           { return ':'; }
-"("                           { return '('; }
-")"                           { return ')'; }
-"{"                           { return '{'; }
-"}"                           { return '}'; }
-"["                           { return '['; }
-"]"                           { return ']'; }
-{FLOAT}                       { yylval.fval = strtod(yytext, NULL); return FLOAT_LIT; }
-{INT}                         { yylval.ival = strtoll(yytext, NULL, 10); return INT_LIT; }
-{STRING}                      { yylval.sval = dup_text(); return STRING_LIT; }
-{ID}                          { yylval.sval = dup_text(); return IDENT; }
-.                             { fprintf(stderr, "[linha %d] caractere inválido: %s\n", yylineno, yytext); return yytext[0]; }
-%%
-int yywrap(void){ return 1; }
+//início
+program     ::= "esteira" string "{" { stmt | var_decl } "}" ;
+
+var_decl    ::= "var" id_list [ ":" type ] [ "=" expr ] ";" ;
+id_list     ::= ident { "," ident } ;
+type        ::= "int" | "float" | "bool" | "string" ;
+
+//o que pode ser uma instrução de linguagem
+stmt        ::= assign ";"
+              | if_stmt
+              | while_stmt
+              | action_stmt
+              | in_out_stmt
+              | "esperar" time_val ";"
+              | bloco ;
+
+//atribuições
+assign      ::= lvalue "=" expr ;
+lvalue      ::= ident | "mem" "[" expr "]" ;
+
+//instruções
+bloco       ::= "{" { stmt | var_decl } "}" ;
+
+if_stmt     ::= "se" "(" expr ")" bloco [ "senao" bloco ] ;
+while_stmt  ::= "enquanto" "(" expr ")" bloco ;
+
+action_stmt ::= "ligar" ";"
+              | "desligar" ";"
+              | "iniciar" ";"
+              | "parar" ";"
+              | "definir" alvo "=" dim_val ";" ;
+
+alvo        ::= ident ; (* ex.: velocidade, inclinacao, alvo_velocidade *)
+
+in_out_stmt     ::= "mostrar" "(" expr { "," expr } ")" ";"
+              | "bip" ";" ;
+
+//unidades
+dim_val     ::= expr [ unit ] ;
+time_val    ::= expr ( "ms" | "s" | "min" ) ;
+unit        ::= "km/h" | "m/s" | "%" | "graus" | "bpm" | "km" | "m" | "min" | "s" ;
+
+//expressões
+expr        ::= or_expr ;
+or_expr     ::= and_expr { ( "ou" | "||" ) and_expr } ;
+and_expr    ::= eq_expr  { ( "e"  | "&&" ) eq_expr  } ;
+eq_expr     ::= rel_expr { ( "==" | "!=" ) rel_expr } ;
+rel_expr    ::= add_expr { ( "<" | ">" | "<=" | ">=" ) add_expr } ;
+add_expr    ::= mul_expr { ( "+" | "-" ) mul_expr } ;
+mul_expr    ::= un_expr  { ( "*" | "/" | "%" ) un_expr  } ;
+un_expr     ::= ( "!" | "-" | "+" ) un_expr | primary ;
+
+primary     ::= literal | ident
+              | "sensor" "." ident
+              | "reg" "(" reg ")"
+              | "mem" "[" expr "]"
+              | "(" expr ")" ;
+
+//registradores
+reg         ::= "R0" | "R1" | "R2" | "R3" ;
+
+//parte literal do código
+literal     ::= int_lit | float_lit | string | bool_lit ;
+bool_lit    ::= "true" | "false" ;
+
+//identificadores
+ident       ::= letter { letter | digit | "_" } ;
+int_lit     ::= digit { digit } ;
+float_lit   ::= digit { digit } "." digit { digit } ;
+string      ::= '"' { char - '"' | '\"' | '\\' char } '"' ;
+letter      ::= "A" | ... | "Z" | "a" | ... | "z" | "_" ;
+digit       ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+(* comentários aceitos: "# ...", "// ...", "/* ... */" *)
