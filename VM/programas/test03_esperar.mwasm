@@ -1,0 +1,23 @@
+; Codigo gerado pela linguagem ESTEIRA para MicrowaveVM
+SET TIME 0
+SET POWER 30
+SET POWER 60
+PRINT
+; esperar 3000 unidades de tempo
+SET TIME 3000
+L0:
+DECJZ TIME L1
+GOTO L0
+L1:
+PRINT
+; esperar 500 unidades de tempo
+SET TIME 500
+L2:
+DECJZ TIME L3
+GOTO L2
+L3:
+PRINT
+SET POWER 0
+HALT
+; Programa "esperar_demo"
+HALT

@@ -88,10 +88,10 @@ extern int yydebug;
     UNIT_GRAUS = 289,              /* UNIT_GRAUS  */
     UNIT_BPM = 290,                /* UNIT_BPM  */
     UNIT_KM = 291,                 /* UNIT_KM  */
-    UNIT_M = 292,                  /* UNIT_M  */
-    UNIT_MIN = 293,                /* UNIT_MIN  */
-    UNIT_S = 294,                  /* UNIT_S  */
-    UNIT_MS = 295,                 /* UNIT_MS  */
+    UNIT_MIN = 292,                /* UNIT_MIN  */
+    UNIT_MS = 293,                 /* UNIT_MS  */
+    UNIT_M = 294,                  /* UNIT_M  */
+    UNIT_S = 295,                  /* UNIT_S  */
     R0 = 296,                      /* R0  */
     R1 = 297,                      /* R1  */
     R2 = 298,                      /* R2  */
@@ -110,7 +110,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 27 "parser.y"
 
   long long ival;
   double    fval;

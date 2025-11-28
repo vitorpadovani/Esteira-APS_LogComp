@@ -1,0 +1,17 @@
+esteira "esperar_demo" {
+    var tempo:int = 0;
+    var potencia:int = 30;
+
+    ligar;
+
+    mostrar(tempo);
+
+    esperar 3s;
+    mostrar(tempo);
+
+    esperar 500ms;
+    mostrar(tempo);
+
+    desligar;
+    parar;
+}

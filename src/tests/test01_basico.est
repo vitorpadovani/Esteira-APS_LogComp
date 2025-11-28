@@ -1,0 +1,9 @@
+esteira "teste_basico" {
+    var tempo:int = 3;
+    var potencia:int = 50;
+
+    ligar;
+    mostrar(tempo);
+    desligar;
+    parar;
+}

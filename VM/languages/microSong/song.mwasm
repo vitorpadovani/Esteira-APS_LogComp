@@ -1,0 +1,49 @@
+SET POWER 262
+SET TIME 8
+note_1:
+DECJZ TIME end_note_2
+PRINT
+GOTO note_1
+end_note_2:
+SET POWER 294
+SET TIME 8
+note_3:
+DECJZ TIME end_note_4
+PRINT
+GOTO note_3
+end_note_4:
+SET POWER 330
+SET TIME 8
+note_5:
+DECJZ TIME end_note_6
+PRINT
+GOTO note_5
+end_note_6:
+SET POWER 349
+SET TIME 8
+note_7:
+DECJZ TIME end_note_8
+PRINT
+GOTO note_7
+end_note_8:
+SET POWER 392
+SET TIME 16
+note_9:
+DECJZ TIME end_note_10
+PRINT
+GOTO note_9
+end_note_10:
+SET POWER 0
+SET TIME 4
+rest_11:
+DECJZ TIME end_rest_12
+GOTO rest_11
+end_rest_12:
+SET POWER 392
+SET TIME 4
+note_13:
+DECJZ TIME end_note_14
+PRINT
+GOTO note_13
+end_note_14:
+HALT

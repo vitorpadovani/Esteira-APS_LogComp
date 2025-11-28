@@ -1,0 +1,9 @@
+; Codigo gerado pela linguagem ESTEIRA para MicrowaveVM
+SET TIME 3
+SET POWER 50
+SET POWER 60
+PRINT
+SET POWER 0
+HALT
+; Programa "teste_basico"
+HALT

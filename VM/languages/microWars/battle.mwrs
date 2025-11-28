@@ -1,0 +1,8 @@
+unit "Warrior" health 50 attack 7
+unit "Mage"    health 30 attack 10
+
+start_battle
+attack "Warrior" -> "Mage" repeat 2
+attack "Mage"    -> "Warrior" repeat 2
+special "Mage" heal 5
+end_battle

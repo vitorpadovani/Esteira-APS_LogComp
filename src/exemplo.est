@@ -1,0 +1,14 @@
+esteira "teste" {
+    var tempo:int = 5;
+    var potencia:int = 60;
+
+    ligar;
+
+    enquanto (tempo > 0) {
+        mostrar(tempo);
+        tempo = tempo - 1;
+    }
+
+    desligar;
+    parar;
+}
